@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Footwork Mirror AI - Fencing & Karate Trainer</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- MediaPipe dependencies via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="mode-idle">
+
+  <div id="app" class="app-container">
+    <!-- Top Header Navigation Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">⚡</span>
+        <h1>FOOTWORK<span class="highlight">MIRROR</span></h1>
+      </div>
+      <div class="header-controls">
+        <div class="preset-selector">
+          <button id="btn-karate" class="preset-btn active" data-preset="karate">🥋 KARATE</button>
+          <button id="btn-fencing" class="preset-btn" data-preset="fencing">🤺 FENCING</button>
+        </div>
+        <button id="btn-toggle-camera" class="icon-btn" title="Toggle Camera Diagnostics">
+          📷 <span id="camera-status-text">Cam: Loading...</span>
+        </button>
+        <button id="btn-sound" class="icon-btn active" title="Toggle Sound">🔊 Sound ON</button>
+      </div>
+    </header>
+
+    <!-- Main Drill Display Area (Wall View) -->
+    <main id="drill-display" class="drill-display">
+      <div class="cue-container">
+        <div id="cue-badge" class="cue-badge hidden"></div>
+        <div id="cue-symbol" class="cue-symbol hidden"></div>
+        <h2 id="cue-text" class="cue-text hidden"></h2>
+        <p id="cue-subtext" class="cue-subtext hidden"></p>
+      </div>
+
+      <!-- Real-time Reaction Feedback HUD -->
+      <div id="reaction-hud" class="reaction-hud hidden">
+        <div class="stat-card flash">
+          <span class="stat-label">REACTION TIME</span>
+          <span id="last-reaction-val" class="stat-value">-- ms</span>
+        </div>
+      </div>
+
+      <!-- Controls Overlay -->
+      <div class="drill-controls">
+        <button id="btn-start" class="btn-primary">▶ START DRILL</button>
+        <button id="btn-stop" class="btn-secondary hidden">⏸ STOP</button>
+        <button id="btn-manual-trigger" class="btn-warning" title="Simulate strike trigger (Shortcut: Spacebar)">
+          💥 SIMULATE STRIKE (SPACE)
+        </button>
+      </div>
+    </main>
+
+    <!-- Diagnostics Sidebar & Camera Preview -->
+    <aside id="diagnostics-panel" class="diagnostics-panel">
+      <div class="panel-header">
+        <h3>AI MOTION DETECTOR</h3>
+        <span id="detector-badge" class="badge idle">WAITING</span>
+      </div>
+
+      <!-- Camera Feed with Pose Canvas Overlay -->
+      <div class="camera-wrapper">
+        <video id="webcam" playsinline muted></video>
+        <canvas id="pose-canvas"></canvas>
+        <div id="pose-overlay-status" class="pose-overlay-status">Searching body...</div>
+      </div>
+
+      <!-- Live Depth & Extension Gauges -->
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-header">
+            <span>ARM EXTENSION</span>
+            <span id="val-arm-ext">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="bar-arm-ext" class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-header">
+            <span>Z-DEPTH VELOCITY</span>
+            <span id="val-z-vel">0.0</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="bar-z-vel" class="progress-bar-fill velocity" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-header">
+            <span>HAND SCALE RATE</span>
+            <span id="val-hand-scale">1.0x</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="bar-hand-scale" class="progress-bar-fill scale" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detection Calibration Controls -->
+      <div class="calibration-box">
+        <label for="sensitivity-slider">STRIKE SENSITIVITY: <span id="sensitivity-label">Strict (0.70)</span></label>
+        <input type="range" id="sensitivity-slider" min="0.3" max="0.9" step="0.05" value="0.70">
+      </div>
+
+      <!-- Session Stats Summary -->
+      <div class="session-stats">
+        <h4>SESSION STATS</h4>
+        <div class="stats-row">
+          <div><small>COMPLETED</small><strong id="stat-completed">0</strong></div>
+          <div><small>AVG REACTION</small><strong id="stat-avg">-- ms</strong></div>
+          <div><small>FASTEST</small><strong id="stat-fastest">-- ms</strong></div>
+        </div>
+      </div>
+
+      <!-- Live Telemetry Data Log Box -->
+      <div class="telemetry-box">
+        <div class="telemetry-header">
+          <span>REAL-TIME METRICS LOG</span>
+          <button id="btn-clear-log" class="text-btn">Clear</button>
+        </div>
+        <div id="telemetry-log" class="telemetry-log">
+          <div class="log-line">System ready. Waiting for drill start...</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

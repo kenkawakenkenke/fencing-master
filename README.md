@@ -18,18 +18,18 @@ To keep individual tools modular and maintainable, top-level directories are res
 ├── README.md                      # Workspace documentation (this file)
 ├── working_notes.md              # Active development context and engineering log
 └── apps/                         # Standalone applications & tools
-    └── footwork-mirror/          # Android App & Wear OS companion for mirror drills
+    └── footwork-mirror-web/      # Camera-based AI Mirror Footwork & Strike Trainer
 ```
 
 ---
 
 ## Projects & Applications
 
-### 1. Footwork Mirror (`apps/footwork-mirror`)
-An Android phone + Wear OS (Pixel Watch) training application for interactive mirror footwork and strike reaction training.
+### 1. Footwork Mirror Web (`apps/footwork-mirror-web`)
+An AI-powered web training application for interactive mirror footwork and strike reaction training using front-facing camera pose estimation.
 
-* **Wall Phone Display (Pixel Phone)**: Displays high-contrast movement cues (Advance/Retreat, Lunge, Gyaku-zuki, etc.) at random intervals.
-* **Wrist Wear OS Companion (Pixel Watch)**: Worn on the martial artist's wrist/arm. Uses linear acceleration sensor telemetry to automatically detect strikes/lunges, recording precise reaction time and stroke completion duration.
+* **Wall / Table Display (Laptop, Tablet, or Smartphone)**: Displays high-contrast, distance-visible movement cues (Advance/Retreat, Lunge, Gyaku-zuki, Oi-zuki, etc.) at random intervals.
+* **3D Motion & Z-Depth Reaction Engine (MediaPipe Pose)**: Tracks 33 3D body landmarks at 30–60 FPS directly in the browser to measure strike reaction time and verify footwork movement without requiring any smartwatch or wearable sensors.
 
 ---
 
